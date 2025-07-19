@@ -1,0 +1,45 @@
+name: CI-CD
+on:
+  push:
+    branches: [main]
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: verdex
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports: ["5432:5432"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+      - name: Install mobile deps
+        run: yarn install --frozen-lockfile
+        working-directory: apps/mobile
+      - name: Lint mobile
+        run: yarn lint
+        working-directory: apps/mobile
+      - name: Test & build API
+        run: |
+          cd apps/api
+          cargo test
+          cargo build --release
+  deploy:
+    needs: lint-test-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --config infra/fly.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
