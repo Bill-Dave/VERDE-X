@@ -1,0 +1,26 @@
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import WalletCard from '../components/WalletCard';
+import QuickActions from '../components/QuickActions';
+import PriceTicker from '../components/PriceTicker';
+
+export default function HomeScreen({ navigation }: any) {
+  return (
+    <LinearGradient colors={['#8B0000', '#000']} style={styles.container}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <Text style={styles.title}>VerdeX</Text>
+        <WalletCard />
+        <PriceTicker symbol="BTC" />
+        <PriceTicker symbol="SOL" />
+        <PriceTicker symbol="USDT" />
+        <QuickActions navigation={navigation} />
+      </ScrollView>
+    </LinearGradient>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  title: { fontSize: 32, fontWeight: 'bold', color: '#FFC107', margin: 20 },
+});
