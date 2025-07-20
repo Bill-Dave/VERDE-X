@@ -1,0 +1,52 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { useMutation } from 'react-query';
+import axios from 'axios';
+
+export default function CreateEscrowScreen({ navigation }: any) {
+  const [asset, setAsset] = useState('BTC');
+  const [amount, setAmount] = useState('');
+  const [counterparty, setCounterparty] = useState('');
+  const [duration, setDuration] = useState('24');
+
+  const mutation = useMutation((body: any) => axios.post('/api/v1/escrows', body));
+
+  const submit = () => {
+    mutation.mutate({ asset, amount: parseFloat(amount), counterparty_email: counterparty, duration_hours: parseInt(duration) });
+  };
+
+  return (
+    <LinearGradient colors={['#8B0000', '#000']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text style={styles.title}>Create Escrow</Text>
+
+        <Text style={styles.label}>Asset</Text>
+        <TextInput placeholder="BTC" value={asset} onChangeText={setAsset} style={styles.input} />
+
+        <Text style={styles.label}>Amount</Text>
+        <TextInput keyboardType="numeric" placeholder="0.00" value={amount} onChangeText={setAmount} style={styles.input} />
+
+        <Text style={styles.label}>Counterparty Email</Text>
+        <TextInput placeholder="user@example.com" value={counterparty} onChangeText={setCounterparty} style={styles.input} />
+
+        <Text style={styles.label}>Duration (h)</Text>
+        <TextInput keyboardType="numeric" placeholder="24" value={duration} onChangeText={setDuration} style={styles.input} />
+
+        <TouchableOpacity style={styles.btn} onPress={submit}>
+          <Text style={styles.btnTxt}>Create</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scroll: { padding: 20 },
+  title: { fontSize: 24, color: '#FFC107', marginBottom: 20 },
+  label: { color: '#fff', marginTop: 10 },
+  input: { backgroundColor: '#1e1e1e', color: '#fff', padding: 10, borderRadius: 6, marginBottom: 10 },
+  btn: { backgroundColor: '#FFC107', padding: 15, borderRadius: 8, marginTop: 20 },
+  btnTxt: { color: '#000', fontWeight: 'bold', textAlign: 'center' },
+});
