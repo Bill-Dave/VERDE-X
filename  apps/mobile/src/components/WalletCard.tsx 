@@ -1,0 +1,22 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function WalletCard() {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.label}>BTC Wallet</Text>
+      <Text style={styles.balance}>1.274 BTC ≈ $100,880</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#1C1C1C',
+    margin: 20,
+    padding: 20,
+    borderRadius: 12,
+  },
+  label: { color: '#FFC107', fontSize: 16 },
+  balance: { color: '#FFF', fontSize: 24, marginTop: 4 },
+});
