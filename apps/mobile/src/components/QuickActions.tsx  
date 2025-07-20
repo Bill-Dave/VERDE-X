@@ -1,0 +1,21 @@
+import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+
+export default function QuickActions({ navigation }: any) {
+  return (
+    <View style={styles.row}>
+      <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('CreateEscrow')}>
+        <Text style={styles.txt}>Create Escrow</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.btn}>
+        <Text style={styles.txt}>Withdraw</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  row: { flexDirection: 'row', justifyContent: 'space-evenly', marginVertical: 20 },
+  btn: { backgroundColor: '#FFC107', padding: 15, borderRadius: 8 },
+  txt: { color: '#000', fontWeight: 'bold' },
+});
