@@ -1,0 +1,39 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Image } from 'react-native';
+import HomeScreen from './src/screens/HomeScreen';
+import TrendsScreen from './src/screens/TrendsScreen';
+import TxScreen from './src/screens/TransactionsScreen';
+import WalletScreen from './src/screens/WalletScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+
+const Tab = createBottomTabNavigator();
+const queryClient = new QueryClient();
+
+export default function App() {
+  const icon = (src: any) => ({ color }: { color: string }) =>
+    <Image source={src} style={{ width: 24, height: 24, tintColor: color }} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarActiveTintColor: '#FFC107',
+            tabBarInactiveTintColor: '#888',
+            tabBarStyle: { backgroundColor: '#000', borderTopColor: '#1f1f1f' },
+            tabBarIcon: icon(require(`./src/assets/${route.name.toLowerCase()}.png`)),
+          })}
+        >
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Trends" component={TrendsScreen} />
+          <Tab.Screen name="Tx" component={TxScreen} />
+          <Tab.Screen name="Wallet" component={WalletScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
+  );
+}
