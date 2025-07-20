@@ -1,0 +1,12 @@
+app = "verdex-api"
+primary_region = "lax"
+
+[build]
+dockerfile = "infra/Dockerfile.api"
+
+[env]
+PORT = "3000"
+
+[http_service]
+internal_port = 3000
+force_https = true
