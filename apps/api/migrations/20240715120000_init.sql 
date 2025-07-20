@@ -1,0 +1,30 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    totp_secret TEXT,
+    kyc_status VARCHAR(20) DEFAULT 'none',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE escrows (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    asset VARCHAR(10) NOT NULL,
+    amount NUMERIC NOT NULL,
+    initiator_id UUID REFERENCES users(id),
+    counterparty_id UUID REFERENCES users(id),
+    status VARCHAR(20) DEFAULT 'pending',
+    btc_txid TEXT,
+    sol_sig TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE dispute_messages (
+    id SERIAL PRIMARY KEY,
+    escrow_id UUID REFERENCES escrows(id),
+    user_id UUID REFERENCES users(id),
+    text TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
