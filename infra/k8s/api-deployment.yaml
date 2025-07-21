@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verdex-api
+  namespace: verdex
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: verdex-api }
+  template:
+    metadata:
+      labels: { app: verdex-api }
+    spec:
+      containers:
+      - name: api
+        image: ghcr.io/verdex/api:latest
+        ports: [{ containerPort: 3000 }]
+        envFrom:
+        - secretRef: { name: verdex-secrets }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: verdex-api-svc
+  namespace: verdex
+spec:
+  selector: { app: verdex-api }
+  ports: [{ port: 80, targetPort: 3000 }]
+  type: ClusterIP
