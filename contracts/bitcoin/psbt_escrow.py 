@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+import sys
+from bitcoinlib.transactions import Transaction
+from bitcoinlib.wallets import Wallet
+from bitcoinlib.keys import Key
+
+def create_escrow_psbt(amount_satoshi: int, initiator_wif: str, counterparty_addr: str):
+    w = Wallet.create('escrow_tmp', keys=initiator_wif, network='bitcoin')
+    utxos = w.utxos()
+    if not utxos:
+        raise ValueError('No UTXO')
+    t = Transaction(network='bitcoin')
+    t.add_input(utxos[0]['txid'], utxos[0]['output_n'])
+    t.add_output(amount_satoshi, counterparty_addr)
+    psbt = t.create_psbt()
+    return psbt.hex()
+
+if __name__ == "__main__":
+    amount = int(sys.argv[1])
+    wif = sys.argv[2]
+    addr = sys.argv[3]
+    print(create_escrow_psbt(amount, wif, addr))
