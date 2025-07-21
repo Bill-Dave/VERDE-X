@@ -1,0 +1,8 @@
+# Bitcoin PSBT Escrow
+
+Quick scripts to create and sign escrow PSBTs.
+
+## Run
+```bash
+pip install -r requirements.txt
+python psbt_escrow.py 100000 <initiator_wif> <counterparty_addr>
