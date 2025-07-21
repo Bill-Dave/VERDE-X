@@ -1,7 +1,9 @@
 name: CI-CD
+
 on:
   push:
     branches: [main]
+
 jobs:
   lint-test-build:
     runs-on: ubuntu-latest
@@ -34,22 +36,24 @@ jobs:
           cd apps/api
           cargo test
           cargo build --release
+
   deploy:
     needs: lint-test-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses:
-mpesa-test:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-    - run: |
-        pip install bitcoinlib
-        python contracts/bitcoin/psbt_escrow.py 100000 cQK... 1A1... > /dev/null
-
- superfly/flyctl-actions/setup-flyctl@master
+      - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --config infra/fly.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  mpesa-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install bitcoinlib
+        run: pip install bitcoinlib
+      - name: Run PSBT test
+        run: |
+          python contracts/bitcoin/psbt_escrow.py 100000 cQK... 1A1... > /dev/null
