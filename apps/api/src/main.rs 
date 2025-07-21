@@ -1,23 +1,23 @@
-use axum::{
-    routing::get,
-    Router,
-};
+use axum::Router;
 use sqlx::postgres::PgPoolOptions;
-use std::env;
 use tracing_subscriber;
 
 mod routes;
 mod models;
 mod services;
+mod config;
+mod error;
+mod middleware;
+mod handlers;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
     dotenvy::dotenv()?;
-    let db_url = env::var("DATABASE_URL")?;
+    let cfg = config::Config::from_env();
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(&db_url)
+        .connect(&cfg.database_url)
         .await?;
     sqlx::migrate!("./migrations").run(&pool).await?;
     let app = routes::router().with_state(pool);
