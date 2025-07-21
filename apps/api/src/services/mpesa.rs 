@@ -1,0 +1,41 @@
+use reqwest::Client;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct StkPushReq {
+    BusinessShortCode: u32,
+    Password: String,
+    Timestamp: String,
+    TransactionType: String,
+    Amount: u32,
+    PartyA: String,
+    PartyB: String,
+    PhoneNumber: String,
+    CallBackURL: String,
+    AccountReference: String,
+    TransactionDesc: String,
+}
+
+pub async fn stk_push(amount: u32, phone: &str, callback: &str) -> anyhow::Result<String> {
+    let client = Client::new();
+    let req = StkPushReq {
+        BusinessShortCode: 174379,
+        Password: base64::encode(format!("174379{}{}", "YOUR_PASSKEY", chrono::Utc::now().format("%Y%m%d%H%M%S"))),
+        Timestamp: chrono::Utc::now().format("%Y%m%d%H%M%S").to_string(),
+        TransactionType: "CustomerPayBillOnline".into(),
+        Amount: amount,
+        PartyA: phone.into(),
+        PartyB: 174379,
+        PhoneNumber: phone.into(),
+        CallBackURL: callback.into(),
+        AccountReference: "verdex".into(),
+        TransactionDesc: "Escrow payment".into(),
+    };
+    let res = client
+        .post("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest")
+        .header("Authorization", "Bearer access_token")
+        .json(&req)
+        .send()
+        .await?;
+    Ok(res.text().await?)
+}
