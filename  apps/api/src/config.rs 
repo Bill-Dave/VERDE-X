@@ -1,0 +1,25 @@
+use std::env;
+
+pub struct Config {
+    pub database_url: String,
+    pub redis_url: String,
+    pub jwt_secret: String,
+    pub btc_rpc_url: String,
+    pub btc_rpc_user: String,
+    pub btc_rpc_pass: String,
+    pub solana_rpc: String,
+}
+
+impl Config {
+    pub fn from_env() -> Self {
+        Self {
+            database_url: env::var("DATABASE_URL").expect("DATABASE_URL"),
+            redis_url: env::var("REDIS_URL").unwrap_or_else(|_| "redis://localhost:6379".into()),
+            jwt_secret: env::var("JWT_SECRET").expect("JWT_SECRET"),
+            btc_rpc_url: env::var("BTC_RPC_URL").unwrap_or_else(|_| "http://localhost:8332".into()),
+            btc_rpc_user: env::var("BTC_RPC_USER").unwrap_or_default(),
+            btc_rpc_pass: env::var("BTC_RPC_PASS").unwrap_or_default(),
+            solana_rpc: env::var("SOLANA_RPC").unwrap_or_else(|_| "https://api.devnet.solana.com".into()),
+        }
+    }
+}
