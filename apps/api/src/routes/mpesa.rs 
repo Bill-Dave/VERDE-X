@@ -1,0 +1,24 @@
+use axum::{extract::Json, http::StatusCode, routing::post, Router};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct MpesaBody {
+    Body: MpesaPayload,
+}
+#[derive(Deserialize)]
+struct MpesaPayload {
+    stkCallback: StkCallback,
+}
+#[derive(Deserialize)]
+struct StkCallback {
+    ResultCode: i32,
+    ResultDesc: String,
+}
+
+async fn mpesa_callback(Json(payload): Json<MpesaBody>) -> StatusCode {
+    if payload.Body.stkCallback.ResultCode == 0 {
+        // mark escrow funded
+    }
+    StatusCode::OK
+}
+pub fn router() -> Router { Router::new().route("/mpesa/callback", post(mpesa_callback)) }
