@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+echo "🚀  Production deploy via Fly.io"
+flyctl deploy --config infra/fly.toml
+echo "✅  API live at https://verdex-api.fly.dev"
