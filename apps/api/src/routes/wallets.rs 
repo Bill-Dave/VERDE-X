@@ -1,0 +1,19 @@
+use axum::{
+    extract::State,
+    response::Json,
+    routing::get,
+    Router,
+};
+use sqlx::PgPool;
+
+async fn balance(State(_pool): State<PgPool>) -> Json<serde_json::Value> {
+    Json(serde_json::json!({
+        "BTC": "1.274",
+        "SOL": "42.0",
+        "USDT": "5000.0"
+    }))
+}
+
+pub fn router() -> Router {
+    Router::new().route("/balance", get(balance))
+}
