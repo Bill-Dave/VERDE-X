@@ -1,0 +1,32 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Colors } from '../themes/colors';
+
+interface Props {
+  escrow: { asset: string; amount: number; status: string };
+}
+
+export default function EscrowCard({ escrow }: Props) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.asset}>{escrow.asset}</Text>
+      <Text style={styles.amount}>{escrow.amount}</Text>
+      <Text style={[styles.status, { color: statusColor(escrow.status) }]}>{escrow.status}</Text>
+    </View>
+  );
+}
+
+function statusColor(status: string) {
+  switch (status) {
+    case 'pending': return Colors.accent;
+    case 'completed': return '#0f0';
+    default: return Colors.error;
+  }
+}
+
+const styles = StyleSheet.create({
+  card: { backgroundColor: Colors.bgCard, margin: 10, padding: 15, borderRadius: 8 },
+  asset: { color: Colors.text, fontWeight: 'bold' },
+  amount: { color: Colors.text, fontSize: 18 },
+  status: { marginTop: 4 },
+});
