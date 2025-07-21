@@ -1,0 +1,24 @@
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { VerdexEscrow } from "../target/types/verdex_escrow";
+import { expect } from "chai";
+
+describe("verdex-escrow", () => {
+  anchor.setProvider(anchor.AnchorProvider.env());
+  const program = anchor.workspace.VerdexEscrow as Program<VerdexEscrow>;
+
+  it("Creates escrow", async () => {
+    const escrowKp = anchor.web3.Keypair.generate();
+    const tx = await program.methods
+      .createEscrow(new anchor.BN(1_000_000))
+      .accounts({
+        escrow: escrowKp.publicKey,
+        initiator: program.provider.publicKey,
+        counterparty: anchor.web3.Keypair.generate().publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([escrowKp])
+      .rpc();
+    expect(tx).to.be.a("string");
+  });
+});
