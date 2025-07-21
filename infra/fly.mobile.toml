@@ -1,0 +1,9 @@
+app = "verdex-mobile"
+primary_region = "lax"
+
+[build]
+dockerfile = "infra/Dockerfile.mobile"
+
+[http_service]
+internal_port = 80
+force_https = true
