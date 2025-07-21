@@ -1,0 +1,11 @@
+import { AnchorProvider, Program } from "@coral-xyz/anchor";
+import * as anchor from "@coral-xyz/anchor";
+import { VerdexEscrow } from "../target/types/verdex_escrow";
+
+const provider = AnchorProvider.env();
+anchor.setProvider(provider);
+const program = anchor.workspace.VerdexEscrow as Program<VerdexEscrow>;
+
+(async () => {
+  console.log("Deploying...");
+})();
