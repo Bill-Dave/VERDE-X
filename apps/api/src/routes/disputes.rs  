@@ -1,0 +1,32 @@
+use axum::{
+    extract::{State, Path},
+    response::Json,
+    routing::{get, post},
+    Router,
+};
+use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
+use uuid::Uuid;
+
+#[derive(Serialize, Deserialize)]
+struct Msg { text: String }
+
+async fn list_msgs(
+    State(pool): State<PgPool>,
+    Path(escrow_id): Path<Uuid>,
+) -> Json<Vec<crate::models::DisputeMessage>> {
+    let msgs = sqlx::query_as!(
+        crate::models::DisputeMessage,
+        "SELECT * FROM dispute_messages WHERE escrow_id = $1",
+        escrow_id
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap_or_default();
+    Json(msgs)
+}
+
+pub fn router() -> Router {
+    Router::new()
+        .route("/:id/messages", get(list_msgs).post(|| async { "send msg" }))
+}
